@@ -1,2 +1,5 @@
 # Ignore the local folder and its contents
 /local/
+
+# Ignore downloads and all subfolders
+/downloads/

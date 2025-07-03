@@ -5,7 +5,8 @@ Welcome to my personal onboarding repository! This repo is my toolkit for settin
 ## What I keep here
 
 - Wallpapers I like
-- Scripts to automate setup and configuration
+- Apps and scripts to automate setup and configuration
+- Terminal and app themes
 - Bookmarks for browsers
 - Handy code snippets
 - Any other files or resources I want quick access to
@@ -19,15 +20,20 @@ Setting up a new computer can be tedious. With this repo, I can skip the repetit
 1. Open a terminal running zsh.
 2. Clone this repository:
    git clone https://github.com/getcubed/onboard.git
-3. Run or review the setup scripts (zsh) and follow any instructions.
+3. Run the main setup script to automate onboarding:
+   ./onboard-setup.sh
+   - By default, this runs all setup scripts (apps, themes, wallpapers).
+   - You can also run ./onboard-setup.sh select to choose which scripts to run interactively.
 4. Add new files or update existing ones as my preferences change.
 
 ## Folder structure
 
-- `scripts/` – My setup and automation scripts
-- `wallpapers/` – My favorite backgrounds
+- `apps/` – My setup and automation scripts (e.g., Homebrew apps)
+- `themes/` – Terminal and app themes, plus install scripts
+- `wallpapers/` – My favorite backgrounds and wallpaper scripts
 - `bookmarks/` – Browser bookmarks
 - `snippets/` – Code snippets and utilities
+- `onboard-setup.sh` – Main script to run all setup scripts
 - `README.md` – This file
 
 I update and reorganize these folders as needed.
