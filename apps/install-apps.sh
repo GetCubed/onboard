@@ -28,6 +28,6 @@ brew install -q --formula gh
 
 # Install cask apps
 echo "Installing Homebrew cask apps..."
-brew install -q --cask discord logi-options+ rectangle visual-studio-code gog-galaxy microsoft-edge steam
+brew install -q --cask discord logi-options+ rectangle visual-studio-code microsoft-edge steam
 
 echo "All apps installed!"
