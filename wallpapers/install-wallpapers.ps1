@@ -44,19 +44,22 @@ function Set-Wallpaper {
         [int]$Style = 2  # 0=Center, 1=Tile, 2=Stretch, 3=Fit, 4=Fill, 5=Span
     )
     
-    Add-Type -TypeDefinition @"
-    using System;
-    using System.Runtime.InteropServices;
-    
-    public class Wallpaper {
-        [DllImport("user32.dll", CharSet = CharSet.Auto)]
-        public static extern int SystemParametersInfo(int uAction, int uParam, string lpvParam, int fuWinIni);
+    # Add the Wallpaper class only if it doesn't already exist
+    if (-not ([System.Management.Automation.PSTypeName]'Wallpaper').Type) {
+        Add-Type -TypeDefinition @"
+        using System;
+        using System.Runtime.InteropServices;
         
-        public static void SetWallpaper(string path) {
-            SystemParametersInfo(20, 0, path, 3);
+        public class Wallpaper {
+            [DllImport("user32.dll", CharSet = CharSet.Auto)]
+            public static extern int SystemParametersInfo(int uAction, int uParam, string lpvParam, int fuWinIni);
+            
+            public static void SetWallpaper(string path) {
+                SystemParametersInfo(20, 0, path, 0x01 | 0x02);
+            }
         }
-    }
 "@
+    }
     
     # Set wallpaper style in registry
     $regPath = "HKCU:\Control Panel\Desktop"
@@ -67,25 +70,17 @@ function Set-Wallpaper {
     [Wallpaper]::SetWallpaper($Path)
 }
 
-# Ask user if they want to set the wallpaper
-$response = Read-Host "Do you want to set this wallpaper as your desktop background? [y/N]"
-if ($response -match "^[Yy]$") {
-    Write-Host "Setting wallpaper as desktop background..." -ForegroundColor Cyan
-    try {
-        # Get the absolute path
-        $absolutePath = Resolve-Path $WallpaperPath
-        Set-Wallpaper -Path $absolutePath.Path -Style 4  # Fill style
-        Write-Host "Wallpaper set successfully!" -ForegroundColor Green
-        Write-Host "Note: You may need to refresh your desktop (F5) to see the changes." -ForegroundColor Yellow
-    }
-    catch {
-        Write-Host "Error: Failed to set wallpaper: $($_.Exception.Message)" -ForegroundColor Red
-        Write-Host "You can manually set the wallpaper from: $WallpaperPath" -ForegroundColor Yellow
-    }
+# Set the wallpaper automatically
+Write-Host "Setting wallpaper as desktop background..." -ForegroundColor Cyan
+try {
+    # Get the absolute path
+    $absolutePath = Resolve-Path $WallpaperPath
+    Set-Wallpaper -Path $absolutePath.Path
+    Write-Host "Wallpaper set successfully!" -ForegroundColor Green
 }
-else {
-    Write-Host "Wallpaper downloaded but not set as background." -ForegroundColor Yellow
-    Write-Host "You can manually set it from: $WallpaperPath" -ForegroundColor Cyan
+catch {
+    Write-Host "Error: Failed to set wallpaper: $($_.Exception.Message)" -ForegroundColor Red
+    Write-Host "You can manually set the wallpaper from: $WallpaperPath" -ForegroundColor Yellow
 }
 
 Write-Host "`nWallpaper setup completed!" -ForegroundColor Green

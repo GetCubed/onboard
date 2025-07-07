@@ -4,8 +4,8 @@
 $ErrorActionPreference = "Stop"
 
 # Windows Terminal theme configuration
-$ThemeUrl = "https://github.com/catppuccin/windows-terminal/raw/main/dist/catppuccin-macchiato.json"
-$ThemeFile = "catppuccin-macchiato.json"
+$ThemeUrl = "https://github.com/catppuccin/windows-terminal/raw/main/macchiato.json"
+$ThemeFile = "macchiato.json"
 $DownloadsDir = Join-Path $PSScriptRoot "..\downloads\themes"
 $WindowsTerminalSettingsPath = "$env:LOCALAPPDATA\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json"
 
@@ -44,8 +44,11 @@ if (Test-Path $WindowsTerminalSettingsPath) {
         $theme = Get-Content $ThemeFilePath -Raw | ConvertFrom-Json
         
         # Initialize schemes array if it doesn't exist
-        if (-not $settings.schemes) {
+        if (-not ($settings.PSObject.Properties.Name -contains "schemes")) {
             $settings | Add-Member -MemberType NoteProperty -Name "schemes" -Value @()
+        }
+        elseif ($null -eq $settings.schemes) {
+            $settings.schemes = @()
         }
         
         # Check if theme already exists
@@ -56,6 +59,27 @@ if (Test-Path $WindowsTerminalSettingsPath) {
         else {
             # Add theme to schemes
             $settings.schemes += $theme
+            
+            # Apply theme to default profile
+            $defaultProfileGuid = $settings.defaultProfile
+            if ($defaultProfileGuid) {
+                $defaultProfile = $settings.profiles.list | Where-Object { $_.guid -eq $defaultProfileGuid }
+                if ($defaultProfile) {
+                    if (-not ($defaultProfile.PSObject.Properties.Name -contains "colorScheme")) {
+                        $defaultProfile | Add-Member -MemberType NoteProperty -Name "colorScheme" -Value $theme.name
+                    }
+                    else {
+                        $defaultProfile.colorScheme = $theme.name
+                    }
+                    Write-Host "Applied theme '$($theme.name)' to default profile." -ForegroundColor Green
+                }
+                else {
+                    Write-Host "Warning: Default profile not found, theme added to schemes only." -ForegroundColor Yellow
+                }
+            }
+            else {
+                Write-Host "Warning: No default profile specified, theme added to schemes only." -ForegroundColor Yellow
+            }
             
             # Save the updated settings
             $settings | ConvertTo-Json -Depth 10 | Set-Content $WindowsTerminalSettingsPath
@@ -71,22 +95,6 @@ if (Test-Path $WindowsTerminalSettingsPath) {
 else {
     Write-Host "Windows Terminal settings not found. Theme downloaded to: $ThemeFilePath" -ForegroundColor Yellow
     Write-Host "You can manually import this theme in Windows Terminal settings." -ForegroundColor Cyan
-}
-
-# PowerShell profile theme setup (optional)
-$ProfileThemeUrl = "https://github.com/catppuccin/powershell/raw/main/themes/catppuccin-macchiato.omp.json"
-$ProfileThemeFile = "catppuccin-macchiato.omp.json"
-$ProfileThemePath = Join-Path $DownloadsDir $ProfileThemeFile
-
-Write-Host "`nDownloading PowerShell profile theme..." -ForegroundColor Cyan
-try {
-    Invoke-WebRequest -Uri $ProfileThemeUrl -OutFile $ProfileThemePath -UseBasicParsing
-    Write-Host "PowerShell theme downloaded to: $ProfileThemePath" -ForegroundColor Green
-    Write-Host "To use this theme with Oh My Posh, add the following to your PowerShell profile:" -ForegroundColor Cyan
-    Write-Host "oh-my-posh init pwsh --config '$ProfileThemePath' | Invoke-Expression" -ForegroundColor Yellow
-}
-catch {
-    Write-Host "Warning: Failed to download PowerShell profile theme. Skipping..." -ForegroundColor Yellow
 }
 
 Write-Host "`nTheme installation completed!" -ForegroundColor Green
