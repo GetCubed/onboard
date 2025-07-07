@@ -98,3 +98,24 @@ else {
 }
 
 Write-Host "`nTheme installation completed!" -ForegroundColor Green
+
+# Apply Edge tabs in Alt+Tab registry setting
+Write-Host "`nApplying Edge tabs Alt+Tab registry setting..." -ForegroundColor Cyan
+try {
+    # Create the registry key if it doesn't exist
+    $regPath = "HKLM:\Software\Policies\Microsoft\Windows\Explorer"
+    if (-not (Test-Path $regPath)) {
+        New-Item -Path $regPath -Force | Out-Null
+    }
+    
+    # Set the registry value to enable Edge tabs in Alt+Tab
+    Set-ItemProperty -Path $regPath -Name "BrowserAltTabBlowout" -Value 1 -Type DWord
+    Write-Host "Edge tabs Alt+Tab setting applied successfully!" -ForegroundColor Green
+    Write-Host "Note: You may need to restart or log out/in for changes to take effect." -ForegroundColor Yellow
+}
+catch {
+    Write-Host "Error: Failed to apply registry setting: $($_.Exception.Message)" -ForegroundColor Red
+    Write-Host "Note: This setting requires administrator privileges." -ForegroundColor Yellow
+}
+
+Write-Host "`nAll theme configurations completed!" -ForegroundColor Green

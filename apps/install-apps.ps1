@@ -43,6 +43,8 @@ else {
 
 # Define applications to install
 $WingetApps = @(
+    "Logitech.OptionsPlus",
+    "7zip.7zip"
     # Add your preferred applications here
     # Example: "7zip.7zip"
 )

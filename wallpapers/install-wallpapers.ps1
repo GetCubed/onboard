@@ -4,9 +4,9 @@
 $ErrorActionPreference = "Stop"
 
 # Wallpaper info
-$WallpaperUrl = "https://w.wallhaven.cc/full/o5/wallhaven-o5jv65.jpg"
-$WallpaperPage = "https://whvn.cc/o5jv65"
-$WallpaperFile = "wallhaven-o5jv65.jpg"
+$WallpaperUrl = "https://w.wallhaven.cc/full/qz/wallhaven-qzj2vd.jpg"
+$WallpaperPage = "https://whvn.cc/qzj2vd"
+$WallpaperFile = "wallhaven-qzj2vd.jpg"
 $DownloadsDir = Join-Path $PSScriptRoot "..\downloads\wallpapers"
 $Tags = "catppuccin digital art street art work building alleyway trees vending machine"
 
