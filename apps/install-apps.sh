@@ -24,6 +24,8 @@ brew update
 
 # Install formulae
 echo "Installing Homebrew formulae..."
+    # NOTE: Node.js is not installed by this script.
+    # It is recommended to install Node.js manually (e.g., via official installer) for best results.
 brew install -q --formula gh
 
 # Install cask apps
